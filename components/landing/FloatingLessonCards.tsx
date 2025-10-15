@@ -1,7 +1,7 @@
 // @ts-nocheck - React Three Fiber component with custom JSX elements
 "use client"
 
-import { useRef } from "react"
+import { useRef, useEffect, useState } from "react"
 import { useFrame } from "@react-three/fiber"
 import { Float, RoundedBox, Text } from "@react-three/drei"
 import type { Group } from "three"
@@ -16,12 +16,21 @@ const lessonData = [
 
 export function FloatingLessonCards() {
   const groupRef = useRef<Group>(null)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useFrame((state) => {
-    if (groupRef.current) {
+    if (groupRef.current && isClient) {
       groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.1
     }
   })
+
+  if (!isClient) {
+    return null
+  }
 
   return (
     <group ref={groupRef}>
